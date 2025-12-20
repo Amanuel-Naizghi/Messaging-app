@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="login-page-container">
+        <div class="header">
+            <p>ChatWorld</p>
+        </div>
+        <div class="gap"></div>
+        <div class="welcome">
+            <h1>Welcome Back</h1>
+            <p>Don't have an account? <a href="/">Sign up</a></p>
+        </div>
+        <div class="login-content-container">
+            <% if(error && error.length > 0) { %>
+                <p><%= error[0] %> </p>
+            <%} %>
+            <h2>Login</h2>
+            <form action="/login" method="post" class="login-form">
+                <label for="userName">User name</label>
+                <input name="userName" type="text" placeholder="Aman dope">
+                <label for="password">Password</label>
+                <input name="password" type="password">
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

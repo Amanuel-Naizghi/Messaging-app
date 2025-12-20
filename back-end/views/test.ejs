@@ -1,5 +1,29 @@
 <html>
     <body>
-        <%= testing %>
+        <div class="account-form">
+            <div class="check-account">
+                <h2>Create Account</h2>
+                <p>Already have an account? <a href="/login">Login</a></p>
+            </div>
+            
+            <ul class="error-container">
+                <% if (locals.errors) {%>
+                    <% errors.forEach((error) => { %>
+                      <li class="error-item"><%= error.msg %></li>
+                    <% }); %>
+                <% } %>
+            </ul>
+            <form action="/createAccount" method="post" class="create-account-form">
+                <label for="userName">User name</label>
+                <input name="userName" type="text" placeholder="Aman dope" value="<%= locals.old?.userName || '' %>" required>
+                <label for="email">Email</label>
+                <input name="userEmail" type="email" placeholder="abcd@gmail.com" value="<%= locals.old?.userEmail || '' %>" required>
+                <label for="password">Password</label>
+                <input name="password" type="password" required>
+                <label for="confirmPassword">Confirm password</label>
+                <input name="confirmPassword" type="password" required>
+                <button type="submit">Sign up</button>
+            </form>
+        </div>
     </body>
 </html>

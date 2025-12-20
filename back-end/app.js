@@ -1,13 +1,12 @@
 const express = require('express');
 const app = express();
 const path = require('node:path');
+const router = require('./router/userRouter');
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-app.get('/', (req,res) => {
-    res.render("test",{testing:"Testing connection"})
-})
+app.get('/', router);
 
 const PORT = 3000;
 

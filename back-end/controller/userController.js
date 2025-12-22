@@ -1,5 +1,5 @@
 const prisma = require('../index');
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const {body,validationResult} = require("express-validator");
 const userControllerHelper = require("./userControllerHelper");
 const axios = require("axios");
@@ -45,32 +45,25 @@ exports.postAddUser = [
                 old:req.body// It puts the previous user inputs after the page get reloaded for better UX
             })
         }
-        const {userName,password} = req.body;
+        const {userName,userEmail,password} = req.body;
         const hashedPassword = await bcrypt.hash(password,10);
         try{
-            // const user = await prisma.user.create({
-            //     data:{userName: userName.toLowerCase(),
-            //           password: hashedPassword,
-            //           folders: {
-            //             create: [
-            //                 {name: "Documents"},
-            //                 {name: "Images"},
-            //                 {name: "Audios"},
-            //                 {name: "Videos"}
-            //             ]
-            //            }
-            //         },
-            //     include: {folders:true}
-            // })
+            await prisma.user.create({
+                data:{
+                    username:userName,
+                    email:userEmail,
+                    passwordHash:hashedPassword
+                }
+            })
 
-            //Changes to be made on the ulogic for putting new users into prisma db
-            
-            res.render('login');
+            //Changes to be made on the logic for putting new users into prisma db
+            console.log(`User name ${userName} has been successfully created`);
+            res.render('login',{error:errors.array()});
         }catch (error) {
             res.status(500).json({error: error.message})
         }
     
         const findAllUsers = await prisma.user.findMany();
-        // console.log(`All users are here men`, findAllUsers);
+        console.log(`All users are here men`, findAllUsers);
     }
 ]

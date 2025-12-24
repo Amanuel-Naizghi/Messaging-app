@@ -8,4 +8,19 @@ const getUser = async (name) => {
     return user;
 }
 
-module.exports ={getUser}
+const getUserByEmail = async (email) => {
+    const user = await prisma.user.findFirst({
+        where:{email}
+    })
+
+    return user;
+}
+
+const getUserById = async (id) => {
+    const user = await prisma.user.findFirst({ 
+        where: { id }
+    });
+    return user;
+}
+
+module.exports ={getUser, getUserByEmail,getUserById}

@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 const userController = require('../controller/userController');
-const {ensureAuthenticated} = require('../middleware/ensureAuthenticated');
+const ensureAuthenticated = require('../middleware/ensureAuthenticated');
 
 
 router.get('/',(req,res) =>{
@@ -23,7 +23,7 @@ router.post('/login',
                     }),                  
 );
 
-router.get('/success',(req,res) => {
+router.get('/success',ensureAuthenticated,(req,res) => {
     res.render('success');
 })
 

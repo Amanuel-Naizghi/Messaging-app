@@ -51,7 +51,7 @@ exports.postAddUser = [
             await prisma.user.create({
                 data:{
                     username:userName,
-                    email:userEmail,
+                    email:userEmail.toLowerCase(),
                     passwordHash:hashedPassword
                 }
             })

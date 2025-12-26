@@ -9,8 +9,9 @@ const getUser = async (name) => {
 }
 
 const getUserByEmail = async (email) => {
+    const emailLowerCase = email.toLowerCase();
     const user = await prisma.user.findFirst({
-        where:{email}
+        where:{email:emailLowerCase}
     })
 
     return user;

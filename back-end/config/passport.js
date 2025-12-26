@@ -10,7 +10,7 @@ module.exports = function(passport) {
             async (userEmail, password, done) => {
                 try {
                     const user = await userControllerHelper.getUserByEmail(userEmail);
-                    console.log(`The email is ${user}`);
+                    console.log(`The email is ${user.email.toLowerCase()}`);
                     if (!user) {
                         return done(null, false, { message: "Incorrect user name" });
                     }

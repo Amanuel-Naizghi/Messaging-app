@@ -20,7 +20,8 @@ exports.getUserChats = async (req,res) =>{
         }
     })
 
-    res.json(chats);
+    // res.json(chats);
+    return res.render('chat',{userId});
 }
 
 exports.createChat = async (req,res) => {

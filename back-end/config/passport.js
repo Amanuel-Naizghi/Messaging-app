@@ -6,11 +6,10 @@ const userControllerHelper = require('../controller/userControllerHelper');
 module.exports = function(passport) {
     passport.use(
         new LocalStrategy(
-            { usernameField: 'userEmail', passwordField: 'password' },
-            async (userEmail, password, done) => {
+            { usernameField: 'email', passwordField: 'password' },
+            async (email, password, done) => {
                 try {
-                    const user = await userControllerHelper.getUserByEmail(userEmail);
-                    console.log(`The email is ${user.email.toLowerCase()}`);
+                    const user = await userControllerHelper.getUserByEmail(email);
                     if (!user) {
                         return done(null, false, { message: "Incorrect user name" });
                     }

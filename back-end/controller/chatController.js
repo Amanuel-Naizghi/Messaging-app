@@ -1,7 +1,6 @@
 const prisma = require("../index");
 
-exports.getUserChats = async (req,res) =>{
-    const userId = req.user.id;
+exports.getUserChats = async (userId) =>{
 
     const chats = await prisma.chat.findMany({
         where:{
@@ -21,34 +20,39 @@ exports.getUserChats = async (req,res) =>{
     })
 
     // res.json(chats);
-    return res.render('chat',{userId});
+    return res.json(chats);
 }
 
-exports.createChat = async (req,res) => {
-    const userId = req.user.id;
-    const {membersIds} = req.body;
+exports.createChat = async (req, res) => {
+  const userId = req.user.id;
+  const { membersIds } = req.body;
 
-    if(!Array.isArray(membersIds) || membersIds.length === 0){
-        return res.status(400).json({error:"messageId required"});
-    }
+  if (!Array.isArray(membersIds) || membersIds.length === 0) {
+    return res.status(400).json({ error: "membersIds required" });
+  }
 
-    try{
-        const chat = await prisma.chat.create({
-            data: {
-                members: {
-                    create: [
-                        {userId},
-                        ...membersIds.map(id => ({userId:id}))
-                    ]
-                }
-            }
-        });
+  try {
+    const allMembers = [...new Set([userId, ...membersIds])];
 
-        res.status(201).json(chat);
-    }catch(err){
-        res.status(500).json({error: err.message})
-    }
-}
+    const chat = await prisma.chat.create({
+      data: {
+        members: {
+          create: allMembers.map(id => ({
+            userId: id
+          }))
+        }
+      },
+      include: {
+        members: true
+      }
+    });
+
+    res.status(201).json(chat);
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 exports.sendMessage = async (req,res) => {
     const userId = req.user.id;

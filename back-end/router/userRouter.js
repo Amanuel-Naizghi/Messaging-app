@@ -14,7 +14,7 @@ router.get('/',(req,res) =>{
 router.post('/createAccount', userController.postAddUser);
 
 router.get('/login',(req,res) => {
-    res.render('login');
+    res.render('login');//Soon to be replaced with our front end react page
 });
 
 router.post('/login', (req, res, next) => {
@@ -48,12 +48,8 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-router.get('/success',ensureAuthenticated,(req,res) => {
-    res.render('success');
-})//Used just for testing purpose for login
-
 router.get('/chats',ensureAuthenticated, chatController.getUserChats);//We used /chats as an API call for getting all messages by a user
-router.post('/chats', chatController.createChat);// For creating a new conversations for a group or 1 to 1
+router.post('/chats',ensureAuthenticated, chatController.createChat);// For creating a new conversations for a group or 1 to 1
 router.post('/chats/:chatId/messages',ensureAuthenticated, chatController.sendMessage);//For sending a new message
 
 module.exports = router;

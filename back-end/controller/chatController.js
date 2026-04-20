@@ -20,7 +20,7 @@ exports.getUserChats = async (userId) =>{
     })
 
     // res.json(chats);
-    return res.json(chats);
+    return chats;
 }
 
 exports.createChat = async (req, res) => {

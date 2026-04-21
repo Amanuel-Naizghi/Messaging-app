@@ -40,10 +40,14 @@ exports.postAddUser = [
     async (req,res) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()){
-            return res.render('test',{
-                errors:errors.array(),//For showing the error input by the user
-                old:req.body// It puts the previous user inputs after the page get reloaded for better UX
+
+            return res.status(401).json({
+                message:errors.array()
             })
+            // return res.render('test',{
+            //     errors:errors.array(),//For showing the error input by the user
+            //     old:req.body// It puts the previous user inputs after the page get reloaded for better UX
+            // })
         }
         const {userName,userEmail,password} = req.body;
         const hashedPassword = await bcrypt.hash(password,10);
@@ -55,15 +59,19 @@ exports.postAddUser = [
                     passwordHash:hashedPassword
                 }
             })
+            const findAllUsers = await prisma.user.findMany();
 
+            return res.status(200).json({
+                message:"User succesfully created",
+                users:findAllUsers
+            });
+            
             //Changes to be made on the logic for putting new users into prisma db
-            console.log(`User name ${userName} has been successfully created`);
-            res.render('login',{error:errors.array()});
+            // console.log(`User name ${userName} has been successfully created`);
+            // res.render('login',{error:errors.array()});
         }catch (error) {
             res.status(500).json({error: error.message})
         }
     
-        const findAllUsers = await prisma.user.findMany();
-        console.log(`All users are here men`, findAllUsers);
     }
 ]

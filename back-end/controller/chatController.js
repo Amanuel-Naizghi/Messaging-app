@@ -23,57 +23,61 @@ exports.getUserChats = async (userId) =>{
     return chats;
 }
 
-exports.createChat = async (req, res) => {
-  const userId = req.user.id;
-  const { membersIds } = req.body;
-
-  if (!Array.isArray(membersIds) || membersIds.length === 0) {
-    return res.status(400).json({ error: "membersIds required" });
+exports.createPrivateChat = async (currentUserId,userId) => {
+  // User can't chat with him self
+  if (!userId || userId === currentUserId) {
+    return { error: true,message: "Invalid user"};
   }
 
   try {
-    const allMembers = [...new Set([userId, ...membersIds])];
+    const existingChat = await exports.findPrivateChat(currentUserId,userId);
+
+    if(existingChat) { 
+      return {error: false,data: existingChat};
+    }
 
     const chat = await prisma.chat.create({
       data: {
+        isGroup: false,
         members: {
-          create: allMembers.map(id => ({
-            userId: id
-          }))
+          create: [
+            { userId: currentUserId},
+            { userId }
+          ]
         }
       },
       include: {
         members: true
       }
     });
+    return {error: false,data: chat};
 
-    res.status(201).json(chat);
-
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  } catch (err){
+    console.error(err);
+    return {error: true,message: "Error creating chat"};
   }
 };
 
-exports.sendMessage = async (req,res) => {
-    const userId = req.user.id;
-    const {content} = req.body;
-    const {chatId} = req.params;
-
-    const isMember = await prisma.chatMember.findFirst({
-        where:{chatId:Number(chatId), userId}
-    })
-    
-    if(!isMember){
-        return res.status(403).json({error: "Not a member"})
-    }
-
-    const message = await prisma.message.create({
-        data: {
-            chatId:Number(chatId),
-            senderId:userId,
-            content
+exports.findPrivateChat = async (user1, user2) => {
+  const chats = await prisma.chat.findMany({
+    where: {
+      isGroup: false,
+      members: {
+        some: {
+          userId: { in: [user1, user2]}
         }
-    });
-
-    res.status(201).json(message);
+      }
+    },
+    include: {
+      members: true
+    }
+  });
+  // This part of the code is returning chats that only includes user1 and user2
+  return chats.find(chat => {
+    const userIds = chat.members.map(m => m.userId);
+    return (userIds.length === 2 &&
+            userIds.includes(user1) &&
+            userIds.includes(user2)
+    )
+  })
 }

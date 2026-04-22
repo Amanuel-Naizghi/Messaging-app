@@ -48,8 +48,16 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-router.get('/chats',ensureAuthenticated, chatController.getUserChats);//We used /chats as an API call for getting all messages by a user
-router.post('/chats',ensureAuthenticated, chatController.createChat);// For creating a new conversations for a group or 1 to 1
-router.post('/chats/:chatId/messages',ensureAuthenticated, chatController.sendMessage);//For sending a new message
+router.post('/chats/private', ensureAuthenticated, async (req,res) => {
+  const currentUserId = req.user.id;
+  const {userId} = req.body;
+  const result = await chatController.createPrivateChat(currentUserId,userId);
+
+  if (!result.error ) {
+    return res.status(200).json(result.data);
+  } else{
+    return res.status(400).json({error: result.message});
+  }
+});
 
 module.exports = router;

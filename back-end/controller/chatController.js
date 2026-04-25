@@ -155,3 +155,42 @@ exports.createGroupChat = async (currentUserId, name, users) => {
   }
 }
 
+exports.createMessage = async ( senderId, chatId, text ) => {
+
+  if(!chatId || !text) {
+    return {error: true, message: "Missing chatId or text", status: 400}
+  }
+
+  try {
+    const member = await prisma.chatMember.findFirst({
+      where: {
+        chatId,
+        userId: senderId
+      }
+    });
+
+    if (!member) {
+      return {error: true, message: "Not part of this chat", status: 403}
+    }
+    // Creating message in the message table if user is a member of the chat
+    const message = await prisma.message.create({
+      data: {
+        chatId,
+        senderId,
+        text
+      }
+    });
+    // Updating the time for the chat
+    await prisma.chat.update({
+      where: {id: chatId},
+      data: { updatedAt: new Date()}
+    });
+
+    return {error: false, data: message, status: 201};
+
+  } catch (err) {
+    console.log(err);
+    return {error: true, message: "Error sending message", status: 500}
+  }
+}
+

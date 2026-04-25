@@ -78,12 +78,25 @@ router.post('/chats/group', ensureAuthenticated, async (req,res) => {
 
   const result = await chatController.createGroupChat(currentUserId, name, users);
 
-  if(!result.error){
+  if(!result.error) {
     const statusId = result.isNew ? 201:200;
     return res.status(statusId).json(result.data);
   } else {
     return res.status(400).json({error: result.message});
   }
-})
+});
+
+router.post('/messages', ensureAuthenticated, async (req,res) => {
+  const senderId = req.user.id;
+  const { chatId, text } = req.body;
+
+  const result = await chatController.createMessage(senderId, chatId, text);
+
+  if(!result.error) {
+    return res.status(result.status).json(result.data);
+  } else {
+    return res.status(result.status).json({error: result.message});
+  }
+});
 
 module.exports = router;

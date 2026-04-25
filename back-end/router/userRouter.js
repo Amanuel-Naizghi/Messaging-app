@@ -99,4 +99,16 @@ router.post('/messages', ensureAuthenticated, async (req,res) => {
   }
 });
 
+router.get('/messages/:chatId', ensureAuthenticated, async (req, res) => {
+  const userId = req.user.id;
+  const chatId = parseInt(req.params.chatId);
+
+  const result = await chatController.getChatDetailed(userId, chatId);
+  if(!result.error) {
+    return res.status(200).json(result.data);
+  } else {
+    return res.status(result.status).json({error: result.message});
+  }
+})
+
 module.exports = router;

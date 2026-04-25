@@ -194,3 +194,37 @@ exports.createMessage = async ( senderId, chatId, text ) => {
   }
 }
 
+exports.getChatDetailed = async (userId, chatId) => {
+
+  try {
+    const member = await prisma.chatMember.findFirst({
+      where: {
+        chatId,
+        userId
+      }
+    });
+
+    if (!member) {
+      return {error: true, message: "Not part of this chat", status: 403};
+    }
+
+    const messages = await prisma.message.findMany({
+      where: { chatId },
+      orderBy: { createdAt: "asc" },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            username: true
+          }
+        }
+      }
+    });
+
+    return {error: false, data: messages};
+
+  } catch (err) {
+    console.error(err);
+    return {error: true, message: "Error fetching messages", status: 500};
+  }
+}

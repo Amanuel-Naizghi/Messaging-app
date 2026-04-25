@@ -1,26 +1,42 @@
 const prisma = require("../index");
 
-exports.getUserChats = async (userId) =>{
-
+exports.getUserChats = async (userId) => {
+  try {
     const chats = await prisma.chat.findMany({
-        where:{
-            members:{
-                some:{
-                    userId: userId
-                }
-            }
-        },
-        include:{
-            members: true,
-            messages:{
-                orderBy:{ createdAt:"desc"},
-                take:1
-            }
+      where: {
+        members: {
+          some: {
+            userId: userId
+          }
         }
-    })
+      },
+      include: {
+      members: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              profilePic: true
+            }
+          }
+        }
+      },
+      messages: { // This part is used for getting the latest message
+        orderBy: { createdAt: "desc" },
+        take: 1
+      }
+    },
+    orderBy: { // Arranges the chats by decreasing order
+      updatedAt: "desc"
+    }
+  });
 
-    // res.json(chats);
-    return chats;
+    return {error: false,chats};
+  } catch (err) {
+    console.error(err);
+    return {error: true, message: "Error fetching chats",status:500}
+  }
 }
 
 exports.createPrivateChat = async (currentUserId,userId) => {
@@ -138,3 +154,4 @@ exports.createGroupChat = async (currentUserId, name, users) => {
     return {error: true, message: "Error creating group chat"}
   }
 }
+

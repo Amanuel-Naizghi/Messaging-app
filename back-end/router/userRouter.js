@@ -30,22 +30,33 @@ router.post('/login', (req, res, next) => {
       });
     }
 
-    req.logIn(user, (err) => {
+    req.logIn(user, async (err) => {
       if (err) {
         return res.status(500).json({ message: "Login failed" });
       }
-
+      const chats = await chatController.getUserChats(user.id);
       return res.status(200).json({
         message: "Login successful",
         user: {
           id: user.id,
           email: user.email
         },
-        chats: chatController.getUserChats(user.id)
+        chats
       });
     });
 
   })(req, res, next);
+});
+
+router.get('/chats', ensureAuthenticated, async (req,res) => {
+  const userId = req.user.id;
+  const result = await chatController.getUserChats(userId);
+
+  if (!result.error) {
+    return res.json(result.chats);
+  } else {
+    return res.status(result.status).json({error: result.message});
+  }
 });
 
 router.post('/chats/private', ensureAuthenticated, async (req,res) => {

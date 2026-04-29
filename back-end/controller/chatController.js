@@ -24,7 +24,15 @@ exports.getUserChats = async (userId) => {
       },
       messages: { // This part is used for getting the latest message
         orderBy: { createdAt: "desc" },
-        take: 1
+        take: 1,
+        include: {
+          sender: {
+            select: {
+              id: true,
+              username: true
+            }
+          }
+        }
       }
     },
     orderBy: { // Arranges the chats by decreasing order

@@ -3,6 +3,7 @@ const passport = require('passport');
 const router = express.Router();
 const userController = require('../controller/userController');
 const chatController = require('../controller/chatController');
+const formater = require('../controller/formating')
 const ensureAuthenticated = require('../middleware/ensureAuthenticated');
 
 
@@ -34,14 +35,15 @@ router.post('/login', (req, res, next) => {
       if (err) {
         return res.status(500).json({ message: "Login failed" });
       }
-      const chats = await chatController.getUserChats(user.id);
+      const chatsResult = await chatController.getUserChats(user.id);
+      const formatedChatsResult = formater.formatedChats(chatsResult.chats);
       return res.status(200).json({
         message: "Login successful",
         user: {
           id: user.id,
           email: user.email
         },
-        chats
+        formatedChatsResult
       });
     });
 

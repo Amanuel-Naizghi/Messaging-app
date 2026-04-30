@@ -11,36 +11,56 @@ exports.getUserChats = async (userId) => {
         }
       },
       include: {
-      members: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              username: true,
-              profilePic: true
+        members: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                profilePic: true
+              }
+            }
+          }
+        },
+        messages: { // This part is used for getting the latest message
+          orderBy: { createdAt: "desc" },
+          take: 1,
+          include: {
+            sender: {
+              select: {
+                id: true,
+                username: true
+              }
             }
           }
         }
       },
-      messages: { // This part is used for getting the latest message
-        orderBy: { createdAt: "desc" },
-        take: 1,
-        include: {
-          sender: {
-            select: {
-              id: true,
-              username: true
-            }
-          }
-        }
+      orderBy: { // Arranges the chats by decreasing order
+        updatedAt: "desc"
       }
-    },
-    orderBy: { // Arranges the chats by decreasing order
-      updatedAt: "desc"
-    }
-  });
+    });
 
-    return {error: false,chats};
+    const enrichedChats = await Promise.all(
+      chats.map(async (chat) => {
+        const member = chat.members.find(m => m.userId === userId);
+        // lastRead is holding the lastReadAt if it exists if not it will hold a very old date that what Date(0) returns
+        const lastRead = member?.lastReadAt || new Date(0);
+
+        const unreadCount = await prisma.message.count({
+          where: {
+            chatId: chat.id,
+            createdAt: { gt: lastRead }
+          }
+        });
+
+        return {
+          ...chat,
+          unreadCount
+        };
+      })
+    );
+
+    return {error: false,enrichedChats};
   } catch (err) {
     console.error(err);
     return {error: true, message: "Error fetching chats",status:500}
@@ -215,7 +235,19 @@ exports.getChatDetailed = async (userId, chatId) => {
     if (!member) {
       return {error: true, message: "Not part of this chat", status: 403};
     }
-
+    // updating the lastReadAt after user open a chat
+    await prisma.chatMember.update({
+      where: {
+        chatId_userId: {
+          chatId,
+          userId
+        }
+      },
+      data: {
+        lastReadAt: new Date()
+      }
+    });
+    // Getting all the messages that have the same chatId
     const messages = await prisma.message.findMany({
       where: { chatId },
       orderBy: { createdAt: "asc" },

@@ -15,7 +15,9 @@ exports.formatedChats = (chats) => {
                     sender: lastMessage.sender.username,
                     createdAt: lastMessage.createdAt
                 }
-                : null
+                : null,
+
+            unreadCount: chat.unreadCount || 0
         };
     });
 

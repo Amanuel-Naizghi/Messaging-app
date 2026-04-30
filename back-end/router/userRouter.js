@@ -36,7 +36,7 @@ router.post('/login', (req, res, next) => {
         return res.status(500).json({ message: "Login failed" });
       }
       const chatsResult = await chatController.getUserChats(user.id);
-      const formatedChatsResult = formater.formatedChats(chatsResult.chats);
+      const formatedChatsResult = formater.formatedChats(chatsResult.enrichedChats);
       return res.status(200).json({
         message: "Login successful",
         user: {

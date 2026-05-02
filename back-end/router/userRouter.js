@@ -105,7 +105,9 @@ router.get('/messages/:chatId', ensureAuthenticated, async (req, res) => {
   const userId = req.user.id;
   const chatId = parseInt(req.params.chatId);
 
-  const result = await chatController.getChatDetailed(userId, chatId);
+  const { cursor, limit } = req.query;
+
+  const result = await chatController.getChatDetailed(userId, chatId,cursor,limit);
   if(!result.error) {
     return res.status(200).json(result.data);
   } else {

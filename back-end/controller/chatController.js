@@ -222,7 +222,7 @@ exports.createMessage = async ( senderId, chatId, text ) => {
   }
 }
 
-exports.getChatDetailed = async (userId, chatId) => {
+exports.getChatDetailed = async (userId, chatId, cursor, limit = 20) => {
 
   try {
     const member = await prisma.chatMember.findFirst({
@@ -251,6 +251,15 @@ exports.getChatDetailed = async (userId, chatId) => {
     const messages = await prisma.message.findMany({
       where: { chatId },
       orderBy: { createdAt: "asc" },
+      take: parseInt(limit),
+      // if cursor doesn't exist (first time loading) it will take the first 20 (take: 20) else it will start from cursor id
+      ...(cursor && {
+        skip: 1, // It will skip the last message that was already shown before it reloads
+        cursor: {
+          id: parseInt(cursor)
+        }
+      }),
+
       include: {
         sender: {
           select: {
@@ -261,10 +270,10 @@ exports.getChatDetailed = async (userId, chatId) => {
       }
     });
 
-    return {error: false, data: messages};
+    return { error: false, data: messages };
 
   } catch (err) {
     console.error(err);
-    return {error: true, message: "Error fetching messages", status: 500};
+    return { error: true, message: "Error fetching messages", status: 500 };
   }
 }

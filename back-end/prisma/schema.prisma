@@ -51,6 +51,7 @@ model ChatMember {
   chat     Chat    @relation(fields: [chatId], references: [id], onDelete: Cascade)
   user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   lastReadAt DateTime?
+  
 
   @@unique([chatId, userId]) // prevents duplicate membership
 }

@@ -3,12 +3,14 @@ const passport = require('passport');
 const router = express.Router();
 const userController = require('../controller/userController');
 const chatController = require('../controller/chatController');
-const formater = require('../controller/formating')
+const formater = require('../controller/formating');
 const ensureAuthenticated = require('../middleware/ensureAuthenticated');
+const { success, error } = require('../utils/response');
+const { message } = require('..');
 
 
 
-router.get('/',(req,res) =>{
+router.get('/',(req,res) => {
     res.render('test');
 });
 
@@ -22,29 +24,22 @@ router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     
     if (err) {
-      return res.status(500).json({ message: "Server error" });
+      return error(res, "Server error", 500)
     }
 
     if (!user) {
-      return res.status(401).json({ 
-        message: info?.message || "Invalid credentials" 
-      });
+      const message = info?.message || "Invalid credentials";
+      return error(res, message, 401);
     }
 
     req.logIn(user, async (err) => {
       if (err) {
-        return res.status(500).json({ message: "Login failed" });
+        return error(res,"Login failed", 401)
       }
       const chatsResult = await chatController.getUserChats(user.id);
       const formatedChatsResult = formater.formatedChats(chatsResult.enrichedChats);
-      return res.status(200).json({
-        message: "Login successful",
-        user: {
-          id: user.id,
-          email: user.email
-        },
-        formatedChatsResult
-      });
+
+      return success(res,formatedChatsResult, 200);
     });
 
   })(req, res, next);
@@ -53,11 +48,12 @@ router.post('/login', (req, res, next) => {
 router.get('/chats', ensureAuthenticated, async (req,res) => {
   const userId = req.user.id;
   const result = await chatController.getUserChats(userId);
+  const formatedChatsResult = formater.formatedChats(chatsResult.enrichedChats);
 
   if (!result.error) {
-    return res.json(result.chats);
+    return success(res, formatedChatsResult, 200)
   } else {
-    return res.status(result.status).json({error: result.message});
+    return error(res, "Invalid credentials", 401)
   }
 });
 

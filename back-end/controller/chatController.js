@@ -250,7 +250,7 @@ exports.getChatDetailed = async (userId, chatId, cursor, limit = 20) => {
     // Getting all the messages that have the same chatId
     const messages = await prisma.message.findMany({
       where: { chatId },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: "desc" },
       take: parseInt(limit),
       // if cursor doesn't exist (first time loading) it will take the first 20 (take: 20) else it will start from cursor id
       ...(cursor && {

@@ -5,6 +5,7 @@ const userController = require('../controller/userController');
 const chatController = require('../controller/chatController');
 const formater = require('../controller/formating');
 const ensureAuthenticated = require('../middleware/ensureAuthenticated');
+const checkChatAccess = require('../middleware/checkChatAccess');
 const { success, error } = require('../utils/response');
 const { message } = require('..');
 
@@ -45,7 +46,7 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-router.get('/chats', ensureAuthenticated, async (req,res) => {
+router.get('/chats', ensureAuthenticated, checkChatAccess, async (req,res) => {
   const userId = req.user.id;
   const result = await chatController.getUserChats(userId);
   const formatedChatsResult = formater.formatedChats(chatsResult.enrichedChats);
@@ -70,7 +71,7 @@ router.post('/chats/private', ensureAuthenticated, async (req,res) => {
   }
 });
 
-router.post('/chats/group', ensureAuthenticated, async (req,res) => {
+router.post('/chats/group', ensureAuthenticated, checkChatAccess, async (req,res) => {
   const currentUserId = req.user.id;
   const { name, users } = req.body;
 
@@ -84,7 +85,7 @@ router.post('/chats/group', ensureAuthenticated, async (req,res) => {
   }
 });
 
-router.post('/messages', ensureAuthenticated, async (req,res) => {
+router.post('/messages', ensureAuthenticated, checkChatAccess, async (req,res) => {
   const senderId = req.user.id;
   const { chatId, text } = req.body;
 

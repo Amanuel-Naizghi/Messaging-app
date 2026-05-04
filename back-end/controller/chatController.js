@@ -190,16 +190,6 @@ exports.createMessage = async ( senderId, chatId, text ) => {
   }
 
   try {
-    const member = await prisma.chatMember.findFirst({
-      where: {
-        chatId,
-        userId: senderId
-      }
-    });
-
-    if (!member) {
-      return {error: true, message: "Not part of this chat", status: 403}
-    }
     // Creating message in the message table if user is a member of the chat
     const message = await prisma.message.create({
       data: {
@@ -225,16 +215,6 @@ exports.createMessage = async ( senderId, chatId, text ) => {
 exports.getChatDetailed = async (userId, chatId, cursor, limit = 20) => {
 
   try {
-    const member = await prisma.chatMember.findFirst({
-      where: {
-        chatId,
-        userId
-      }
-    });
-
-    if (!member) {
-      return {error: true, message: "Not part of this chat", status: 403};
-    }
     // updating the lastReadAt after user open a chat
     await prisma.chatMember.update({
       where: {

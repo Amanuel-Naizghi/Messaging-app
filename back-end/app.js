@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const session = require("express-session");
 const path = require('node:path');
+const http = require('http');
+const { Server } = require("socket.io");
 
 const passport = require("passport");
 require("./config/passport")(passport);
@@ -28,12 +30,28 @@ app.use(flash());
 app.use((req, res, next) => {
     res.locals.error = req.flash("error");
     next();
-})
+});
+
+const PORT = 3000
+// Socket
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+    },
+});
+
+app.set("io", io);
+
+const socketHandler = require("./socket/socket");
+socketHandler(io);
 
 app.use('/', router);
 
-const PORT = 3000;
+server.listen(PORT, () => {
+    console.log("Server running")
+});
 
-app.listen(PORT, () => {
-    console.log(`Your app is running on port ${PORT}`);
-})
+
+

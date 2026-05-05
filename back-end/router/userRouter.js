@@ -6,6 +6,7 @@ const chatController = require('../controller/chatController');
 const formater = require('../controller/formating');
 const ensureAuthenticated = require('../middleware/ensureAuthenticated');
 const checkChatAccess = require('../middleware/checkChatAccess');
+const validateMessage = require('../middleware/validateMessage');
 const { success, error } = require('../utils/response');
 const { message } = require('..');
 
@@ -49,7 +50,7 @@ router.post('/login', (req, res, next) => {
 router.get('/chats', ensureAuthenticated, checkChatAccess, async (req,res) => {
   const userId = req.user.id;
   const result = await chatController.getUserChats(userId);
-  const formatedChatsResult = formater.formatedChats(chatsResult.enrichedChats);
+  const formatedChatsResult = formater.formatedChats(result.enrichedChats);
 
   if (!result.error) {
     return success(res, formatedChatsResult, 200)
@@ -85,20 +86,22 @@ router.post('/chats/group', ensureAuthenticated, checkChatAccess, async (req,res
   }
 });
 
-router.post('/messages', ensureAuthenticated, checkChatAccess, async (req,res) => {
+router.post('/messages', ensureAuthenticated, checkChatAccess, validateMessage, async (req,res) => {
   const senderId = req.user.id;
   const { chatId, text } = req.body;
 
   const result = await chatController.createMessage(senderId, chatId, text);
 
   if(!result.error) {
+    const io = req.app.get("io");
+    io.to(`chat_${chatId}`).emit("receive_message", result.data);
     return success(res, result.data, result.status)
   } else {
     return error(res, result.message, result.status);
   }
 });
 
-router.get('/messages/:chatId', ensureAuthenticated, async (req, res) => {
+router.get('/messages/:chatId', ensureAuthenticated, checkChatAccess, async (req, res) => {
   const userId = req.user.id;
   const chatId = parseInt(req.params.chatId);
 

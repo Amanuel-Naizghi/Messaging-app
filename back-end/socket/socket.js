@@ -18,6 +18,7 @@ module.exports = (io) => {
           break;
         }
       }
+      
       console.log("User disconnected:", socket.id);
     });
 

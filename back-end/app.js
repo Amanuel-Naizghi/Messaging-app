@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require("cors");
 const session = require("express-session");
 const path = require('node:path');
 const http = require('http');
@@ -7,6 +8,12 @@ const { Server } = require("socket.io");
 
 const passport = require("passport");
 require("./config/passport")(passport);
+
+app.use(cors({
+    origin: "http://localhost:5173", // The orgin is react's origin
+    credentials: true
+}))
+
 const flash = require("connect-flash");
 
 app.use(session({
@@ -38,7 +45,8 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "*",
+        origin: "http://localhost:5173",
+        credentials: true
     },
 });
 

@@ -1,7 +1,11 @@
+import Sidebar from "../components/chat/Sidebar";
+import ChatWindow from "../components/chat/ChatWindow";
+
 function Chat() {
     return (
-        <div>
-            <h1>Chat Page</h1>
+        <div className="h-screen flex overflow-hidden">
+            <Sidebar />
+            <ChatWindow />
         </div>
     );
 }

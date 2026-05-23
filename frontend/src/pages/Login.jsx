@@ -37,11 +37,13 @@ function Login() {
             navigate("/");
 
         } catch (error) {
-            console.log(error);
+            console.log(error.response.data);
 
             setErrorMessage(
-                error.response?.data?.message || "Login failed"
+                error.response?.data?.error || "Invalid email or password"
             );
+
+            
         };
     }
 

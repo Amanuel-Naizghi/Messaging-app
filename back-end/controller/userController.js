@@ -24,7 +24,7 @@ const validateUser = [
         return true;
     }).escape(),
 
-    body("userName").trim().toLowerCase()
+     body("userName").trim().toLowerCase()
     .isLength({min:4,max:10}).withMessage(`User name ${lengthErr2}`)
     .custom(async (value)=>{ //value is the same as req.body.userName
         const user = await userControllerHelper.getUser(value);
@@ -49,13 +49,13 @@ exports.postAddUser = [
             //     old:req.body// It puts the previous user inputs after the page get reloaded for better UX
             // })
         }
-        const {userName,userEmail,password} = req.body;
+        const {userName,email,password} = req.body;
         const hashedPassword = await bcrypt.hash(password,10);
         try{
             await prisma.user.create({
                 data:{
                     username:userName,
-                    email:userEmail.toLowerCase(),
+                    email:email.toLowerCase(),
                     passwordHash:hashedPassword
                 }
             })

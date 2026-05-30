@@ -7,14 +7,13 @@ function Register() {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        firstName:"",
-        lastName:"",
+        userName:"",
         email:"",
         password:"",
         confirmPassword:"",
     });
 
-    const [errorMessage, setErrorMessage] = useState("");
+    const [errors, setErrors] = useState([]);
 
     const handleChange = (e) => {
         setFormData({
@@ -26,10 +25,10 @@ function Register() {
     const handleSubmit = async(e) => {
         e.preventDefault();
 
-        setErrorMessage("");
+        setErrors([]);
 
         if(formData.password !== formData.confirmPassword){
-            return setErrorMessage("Passwords do not match");
+            return setErrors([{ msg: "Passwords do not match"}]);
         }
 
         try{
@@ -37,10 +36,17 @@ function Register() {
             console.log(response);
             navigate("/login");
         } catch(error){
-            console.log(error.response?.data);
-            setErrorMessage(
-                error.response?.data?.error || "Registration Failed"
-            );
+            console.log(error.response?.data.message);
+            const backendErrors = error.response?.data?.message;
+            if (Array.isArray(backendErrors)){
+                setErrors(backendErrors);
+            } else {
+                setErrors([
+                    {
+                        msg: error.response?.data?.error || "Registration Failed"
+                    }
+                ]);
+            }
         }
     }
 
@@ -57,32 +63,25 @@ function Register() {
                 </h1>
 
                 {
-                errorMessage && (
+                 errors.length > 0 && (
+
                     <div className="bg-red-100 text-red-600 p-3 rounded-lg mb-4">
-                    {errorMessage}
+                        <ul className="list-disc list-inside space-y-1">
+                            {errors.map((error, index) => (
+                                <li key={index}> {error.msg} </li>
+                            ))}
+                        </ul>
                     </div>
-                )
+                 )
                 }
 
-                <div className="grid grid-cols-2 gap-4">
-
                 <input
-                    type="text"
-                    name="firstName"
-                    placeholder="First name"
-                    onChange={handleChange}
-                    className="border p-3 rounded-lg outline-none"
+                type="text"
+                name="userName"
+                placeholder="user123"
+                onChange={handleChange}
+                className="w-full border p-3 rounded-lg mt-4 outline-none"
                 />
-
-                <input
-                    type="text"
-                    name="lastName"
-                    placeholder="Last name"
-                    onChange={handleChange}
-                    className="border p-3 rounded-lg outline-none"
-                />
-
-                </div>
 
                 <input
                 type="email"

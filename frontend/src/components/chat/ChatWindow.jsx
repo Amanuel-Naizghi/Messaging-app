@@ -1,6 +1,7 @@
 import MessageInput from "./MessageInput";
 
 function ChatWindow() {
+  
   return (
     <div className="flex-1 flex flex-col bg-gray-100">
 

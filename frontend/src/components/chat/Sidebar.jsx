@@ -1,4 +1,5 @@
-function Sidebar() {
+function Sidebar({chats,selectedChat,setSelectedChat}) {
+
   return (
     <div className="w-[350px] border-r border-gray-300 bg-white">
       
@@ -19,16 +20,44 @@ function Sidebar() {
       </div>
 
       {/* Conversations */}
-      <div className="overflow-y-auto h-[calc(100vh-140px)]">
+       <div className="overflow-y-auto">
 
-        <div className="p-4 hover:bg-gray-100 cursor-pointer border-b">
-          <h3 className="font-semibold">Mr A</h3>
-          <p className="text-sm text-gray-500 truncate">
-            Last message here...
-          </p>
-        </div>
+        {chats.map((chat) => (
+
+          <div
+            key={chat.id}
+            onClick={() => setSelectedChat(chat)}
+            className={`p-4 cursor-pointer border-b hover:bg-gray-100
+              ${
+                selectedChat?.id === chat.id
+                  ? "bg-gray-100"
+                  : ""
+              }
+            `}
+          >
+
+            <h3 className="font-semibold">
+
+              {chat.isGroup
+                ? chat.groupName
+                : chat.members[0]?.username}
+
+            </h3>
+
+            <p className="text-sm text-gray-500 truncate">
+
+              {chat.lastMessage
+                ? chat.lastMessage.text
+                : "No messages yet"}
+
+            </p>
+
+          </div>
+
+        ))}
 
       </div>
+
     </div>
   );
 }

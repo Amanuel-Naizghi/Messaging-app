@@ -43,7 +43,7 @@ function Register() {
             } else {
                 setErrors([
                     {
-                        msg: error.response?.data?.error || "Registration Failed"
+                        msg: "Registration Failed"
                     }
                 ]);
             }

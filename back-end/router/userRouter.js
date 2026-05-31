@@ -18,9 +18,6 @@ router.get('/',(req,res) => {
 
 router.post('/createAccount', userController.postAddUser);
 
-router.get('/login',(req,res) => {
-    res.render('login');//Soon to be replaced with our front end react page
-});
 
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
@@ -47,7 +44,7 @@ router.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-router.get('/chats', ensureAuthenticated, checkChatAccess, async (req,res) => {
+router.get('/chats', ensureAuthenticated, async (req,res) => {
   const userId = req.user.id;
   const result = await chatController.getUserChats(userId);
   const formatedChatsResult = formater.formatedChats(result.enrichedChats);

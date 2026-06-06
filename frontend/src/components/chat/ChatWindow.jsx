@@ -1,37 +1,44 @@
 import MessageInput from "./MessageInput";
 
-function ChatWindow() {
+function ChatWindow({selectedChat, messages}) {
+
+  if(!selectedChat) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        Select a conversation
+      </div>
+    );
+  }
   
   return (
-    <div className="flex-1 flex flex-col bg-gray-100">
+    <div className="flex-1 flex flex-col">
 
-      {/* Header */}
-      <div className="h-[70px] bg-white border-b flex items-center px-5">
+      <div className="h-[70px] border-b flex items-center px-5">
+
         <h2 className="font-bold text-xl">
-          Mr A
+
+          {selectedChat.isGroup
+            ? selectedChat.groupName
+            : selectedChat.members[0]?.username}
+
         </h2>
+
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-5 space-y-4">
 
-        {/* Sender */}
-        <div className="flex">
-          <div className="bg-white p-3 rounded-xl max-w-[300px] shadow">
-            Hello 👋
-          </div>
-        </div>
+        {messages.map((message) => (
 
-        {/* Current user */}
-        <div className="flex justify-end">
-          <div className="bg-blue-500 text-white p-3 rounded-xl max-w-[300px] shadow">
-            Hi there!
+          <div
+            key={message.id}
+            className="bg-white p-3 rounded-xl shadow w-fit max-w-[400px]"
+          >
+            {message.text}
           </div>
-        </div>
+
+        ))}
 
       </div>
-
-      <MessageInput />
 
     </div>
   );

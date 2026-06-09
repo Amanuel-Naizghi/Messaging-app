@@ -1,4 +1,7 @@
+import { useAuth } from "../../context/AuthContext";
+
 function Sidebar({chats,selectedChat,setSelectedChat}) {
+  const { user } = useAuth();
 
   return (
     <div className="w-[350px] border-r border-gray-300 bg-white">
@@ -22,39 +25,46 @@ function Sidebar({chats,selectedChat,setSelectedChat}) {
       {/* Conversations */}
        <div className="overflow-y-auto">
 
-        {chats.map((chat) => (
+        {chats.map((chat) => {
+            const otherMember = chat.members.find( member => member.id !== user.id);
+            console.log("Current User:", user);
+            console.log("Chat members:", chat.members);   
+            console.log("Other members:", otherMember);          
+                                
+          return (
+            <div
+              key={chat.id}
+              onClick={() => setSelectedChat(chat)}
+              className={`p-4 cursor-pointer border-b hover:bg-gray-100 text-left
+                ${
+                  selectedChat?.id === chat.id
+                    ? "bg-gray-100"
+                    : ""
+                }
+              `}
+            >
 
-          <div
-            key={chat.id}
-            onClick={() => setSelectedChat(chat)}
-            className={`p-4 cursor-pointer border-b hover:bg-gray-100
-              ${
-                selectedChat?.id === chat.id
-                  ? "bg-gray-100"
-                  : ""
-              }
-            `}
-          >
+              <h3 className="font-semibold">
 
-            <h3 className="font-semibold">
+                {chat.isGroup
+                  ? chat.groupName
+                  : otherMember?.username.charAt(0).toUpperCase()+otherMember?.username.slice(1)}
 
-              {chat.isGroup
-                ? chat.groupName
-                : chat.members[0]?.username}
+              </h3>
 
-            </h3>
+              <p className="text-sm text-gray-500 truncate">
 
-            <p className="text-sm text-gray-500 truncate">
+                {chat.lastMessage
+                  ? chat.lastMessage.text
+                  : "No messages yet"}
 
-              {chat.lastMessage
-                ? chat.lastMessage.text
-                : "No messages yet"}
+              </p>
 
-            </p>
+            </div>
+          )
+          
 
-          </div>
-
-        ))}
+        })}
 
       </div>
 

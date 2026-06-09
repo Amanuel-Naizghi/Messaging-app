@@ -1,6 +1,12 @@
 import MessageInput from "./MessageInput";
+import { useAuth } from "../../context/AuthContext";
 
 function ChatWindow({selectedChat, messages}) {
+
+  const { user } = useAuth();
+  const otherMember = selectedChat?.members?.find(
+    member => member.id !== user.id
+  );
 
   if(!selectedChat) {
     return (
@@ -19,7 +25,7 @@ function ChatWindow({selectedChat, messages}) {
 
           {selectedChat.isGroup
             ? selectedChat.groupName
-            : selectedChat.members[0]?.username}
+            : otherMember?.username.charAt(0).toUpperCase()+otherMember?.username.slice(1)}
 
         </h2>
 
@@ -27,16 +33,78 @@ function ChatWindow({selectedChat, messages}) {
 
       <div className="flex-1 overflow-y-auto p-5 space-y-4">
 
-        {messages.map((message) => (
+        {messages.map((message) => {
+          const isMine = message.senderId === user.id;
 
-          <div
-            key={message.id}
-            className="bg-white p-3 rounded-xl shadow w-fit max-w-[400px]"
-          >
-            {message.text}
+          return (
+            <div
+                key={message.id}
+                className={`flex ${
+                  isMine
+                    ? "justify-end"
+                    : "justify-start"
+                }`}
+              >
+
+                {!isMine && (
+
+                  <div className="flex gap-2 items-end">
+
+                    <div
+                      className="
+                        w-8
+                        h-8
+                        rounded-full
+                        bg-gray-300
+                        flex
+                        items-center
+                        justify-center
+                        text-sm
+                        font-semibold
+                      "
+                    >
+                      {message.sender.username
+                        .charAt(0)
+                        .toUpperCase()}
+                    </div>
+
+                    <div>
+
+                      <div className="bg-white p-3 rounded-xl shadow">
+                        {message.text}
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                )}
+
+                {isMine && (
+
+                  <div>
+
+                    <div
+                      className="
+                        bg-blue-500
+                        text-white
+                        p-3
+                        rounded-xl
+                        shadow
+                      "
+                    >
+                      {message.text}
+                    </div>
+
+                  </div>
+
+                )}
+
           </div>
 
-        ))}
+              );
+
+          })}
 
       </div>
 

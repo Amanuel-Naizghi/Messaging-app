@@ -14,9 +14,9 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      await getChats();
+      const response = await getChats();
 
-      setUser(true);
+      setUser(response.data.user);
     } catch (error) {
       setUser(null);
     } finally {

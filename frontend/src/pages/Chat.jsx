@@ -22,7 +22,7 @@ function Chat() {
         try {
             const response = await getChats();
             console.log(response);
-            setChats(response.data || response);
+            setChats(response.data.chats || response);
         } catch(error) {
             console.log(error);
         }

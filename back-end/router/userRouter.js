@@ -38,7 +38,20 @@ router.post('/login', (req, res, next) => {
       const chatsResult = await chatController.getUserChats(user.id);
       const formatedChatsResult = formater.formatedChats(chatsResult.enrichedChats);
 
-      return success(res,formatedChatsResult, 200);
+      return success(
+        res,
+        {
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            profilePic: user.profilePic
+          },
+
+          chats: formatedChatsResult
+        },
+          200
+      );
     });
 
   })(req, res, next);
@@ -50,7 +63,19 @@ router.get('/chats', ensureAuthenticated, async (req,res) => {
   const formatedChatsResult = formater.formatedChats(result.enrichedChats);
 
   if (!result.error) {
-    return success(res, formatedChatsResult, 200)
+    return success(
+      res,
+      {
+        user: {
+          id: req.user.id,
+          username: req.user.username,
+          email: req.user.email,
+          profilePic: req.user.profilePic
+        },
+        chats: formatedChatsResult
+      },
+      200
+    );
   } else {
     return error(res, "Invalid credentials", 401)
   }

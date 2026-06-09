@@ -28,11 +28,11 @@ function Login() {
         setErrorMessage("");
 
         try {
-            const data = await loginUser(formData);
+            const response = await loginUser(formData);
             
-            console.log(data);
+            console.log(response);
 
-            setUser(true);
+            setUser(response.data.user);
 
             navigate("/");
 

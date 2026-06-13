@@ -19,3 +19,14 @@ export const getMessages = async (chatId) => {
     const response = await API.get(`/messages/${chatId}`);
     return response.data;
 }
+
+export const sendMessage = async (chatId, text) => {
+    const response = await API.post(
+        "/messages",
+        {
+            chatId,
+            text
+        }
+    );
+    return response.data;
+}

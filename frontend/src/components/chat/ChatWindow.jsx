@@ -1,12 +1,21 @@
 import MessageInput from "./MessageInput";
 import { useAuth } from "../../context/AuthContext";
 
-function ChatWindow({selectedChat, messages}) {
+function ChatWindow({selectedChat, messages, onSend}) {
 
   const { user } = useAuth();
   const otherMember = selectedChat?.members?.find(
     member => member.id !== user.id
   );
+
+  const formatTime = (dateString) => {
+
+    return new Date(dateString)
+           .toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+           });
+  }
 
   if(!selectedChat) {
     return (
@@ -72,6 +81,9 @@ function ChatWindow({selectedChat, messages}) {
 
                       <div className="bg-white p-3 rounded-xl shadow">
                         {message.text}
+                        <p className="text-[11px] text-right mt-1 opacity-75">
+                          {formatTime(message.createdAt)}
+                        </p>
                       </div>
 
                     </div>
@@ -94,6 +106,9 @@ function ChatWindow({selectedChat, messages}) {
                       "
                     >
                       {message.text}
+                      <p className="text-[11px] text-right mt-1 text-white">
+                        {formatTime(message.createdAt)}
+                      </p>
                     </div>
 
                   </div>
@@ -107,7 +122,7 @@ function ChatWindow({selectedChat, messages}) {
           })}
 
       </div>
-
+      <MessageInput onSend={onSend}/>
     </div>
   );
 }

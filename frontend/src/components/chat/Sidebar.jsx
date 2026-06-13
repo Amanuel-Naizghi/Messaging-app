@@ -27,9 +27,9 @@ function Sidebar({chats,selectedChat,setSelectedChat}) {
 
         {chats.map((chat) => {
             const otherMember = chat.members.find( member => member.id !== user.id);
-            console.log("Current User:", user);
-            console.log("Chat members:", chat.members);   
-            console.log("Other members:", otherMember);          
+            // console.log("Current User:", user);
+            // console.log("Chat members:", chat.members);   
+            // console.log("Other members:", otherMember);          
                                 
           return (
             <div

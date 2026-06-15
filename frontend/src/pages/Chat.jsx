@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getChats,getMessages } from "../services/authService";
 import { sendMessage } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
+import { socket } from "../socket/socket";
 
 function Chat() {
 
@@ -21,6 +22,41 @@ function Chat() {
         if (!selectedChat) return;
         loadMessages(selectedChat.id);
     },[selectedChat]);
+
+    useEffect(() => {
+
+        if(!selectedChat) return;
+        socket.emit(
+            "join_chat",
+            selectedChat.id
+        );
+    }, [selectedChat]);
+
+    useEffect(() => {
+
+        const handleReceiveMessage = (message) => {
+
+            setMessages(prev => [
+                ...prev, 
+                message
+            ]);
+
+        };
+
+        socket.on(
+            "receive_message",
+            handleReceiveMessage
+        );
+
+        return () => {
+            socket.off(
+                "receive_message",
+                handleReceiveMessage
+            );
+        };
+
+    }, []);
+
 
     const loadChats = async() => {
         try {

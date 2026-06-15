@@ -1,9 +1,20 @@
 import MessageInput from "./MessageInput";
 import { useAuth } from "../../context/AuthContext";
+import { useEffect, useRef } from "react";
 
 function ChatWindow({selectedChat, messages, onSend}) {
 
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth"
+    });
+  }, [messages]);
+
   const { user } = useAuth();
+
   const otherMember = selectedChat?.members?.find(
     member => member.id !== user.id
   );
@@ -24,6 +35,8 @@ function ChatWindow({selectedChat, messages, onSend}) {
       </div>
     );
   }
+
+  
   
   return (
     <div className="flex-1 flex flex-col">
@@ -120,7 +133,7 @@ function ChatWindow({selectedChat, messages, onSend}) {
               );
 
           })}
-
+          <div ref={messagesEndRef}></div>
       </div>
       <MessageInput onSend={onSend}/>
     </div>

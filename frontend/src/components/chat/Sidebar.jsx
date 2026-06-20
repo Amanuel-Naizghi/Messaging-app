@@ -26,10 +26,7 @@ function Sidebar({chats,selectedChat,setSelectedChat}) {
        <div className="overflow-y-auto">
 
         {chats.map((chat) => {
-            const otherMember = chat.members.find( member => member.id !== user.id);
-            // console.log("Current User:", user);
-            // console.log("Chat members:", chat.members);   
-            // console.log("Other members:", otherMember);          
+            const otherMember = chat.members.find( member => member.id !== user.id);       
                                 
           return (
             <div

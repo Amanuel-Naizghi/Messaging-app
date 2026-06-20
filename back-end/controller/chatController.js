@@ -192,12 +192,21 @@ exports.createMessage = async ( senderId, chatId, text ) => {
   try {
     // Creating message in the message table if user is a member of the chat
     const message = await prisma.message.create({
-      data: {
-        chatId,
-        senderId,
-        text
-      }
-    });
+          data: {
+            chatId,
+            senderId,
+            text
+          },
+          include: {
+            sender: {
+              select: {
+                id: true,
+                username: true,
+                profilePic: true
+              }
+            }
+          }
+        });
     // Updating the time for the chat
     await prisma.chat.update({
       where: {id: chatId},

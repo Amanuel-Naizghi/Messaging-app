@@ -34,12 +34,31 @@ function Chat() {
 
     useEffect(() => {
 
+        if (!user) return;
+
         const handleReceiveMessage = (message) => {
 
-            setMessages(prev => [
-                ...prev, 
-                message
-            ]);
+            // Ignore messages sent by the current user
+            if (message.senderId === user.id) {
+                return;
+            }
+
+            setMessages(prev => {
+
+                const exists = prev.some(
+                    msg => msg.id === message.id
+                );
+
+                if (exists) {
+                    return prev;
+                }
+
+                return [
+                    ...prev,
+                    message
+                ];
+
+            });
 
         };
 
@@ -55,7 +74,7 @@ function Chat() {
             );
         };
 
-    }, []);
+    }, [user]);
 
 
     const loadChats = async() => {
@@ -80,11 +99,15 @@ function Chat() {
     }
 
     const handleSendMessage = async(text) => {
-        if(!selectedChat) return;
 
-        try{
+        if (!selectedChat) return;
 
-            const response = await sendMessage(selectedChat.id, text);
+        try {
+
+            const response = await sendMessage(
+                selectedChat.id,
+                text
+            );
 
             const newMessage = {
                 ...response.data,
@@ -93,16 +116,35 @@ function Chat() {
                     username: user.username
                 }
             };
-
+            console.log("Local ID:", newMessage.id);
             setMessages(prev => [
                 ...prev,
                 newMessage
-            ])
-            console.log(response);
-        } catch(error){
+            ]);
+
+            setChats(prev =>
+                prev.map(chat => {
+
+                    if (chat.id !== selectedChat.id) {
+                        return chat;
+                    }
+
+                    return {
+                        ...chat,
+                        lastMessage: {
+                            text: newMessage.text,
+                            sender: user.username,
+                            createdAt: newMessage.createdAt
+                        }
+                    };
+
+                })
+            );
+
+        } catch(error) {
             console.log(error);
         }
-    }
+    };
 
     return (
         <div className="h-screen flex overflow-hidden">

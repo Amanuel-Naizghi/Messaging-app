@@ -1,6 +1,6 @@
 import { useAuth } from "../../context/AuthContext";
 
-function Sidebar({chats,selectedChat,setSelectedChat}) {
+function Sidebar({chats,selectedChat,setSelectedChat,onNewChat}) {
   const { user } = useAuth();
 
   return (
@@ -11,6 +11,9 @@ function Sidebar({chats,selectedChat,setSelectedChat}) {
         <h2 className="text-2xl font-bold">
           Messages
         </h2>
+        <button onClick={onNewChat} className="bg-blue-500 text-white px-3 py-1 rounded-lg ">
+          +
+        </button>
       </div>
 
       {/* Search */}

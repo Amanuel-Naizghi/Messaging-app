@@ -5,14 +5,21 @@ import { getChats,getMessages } from "../services/authService";
 import { sendMessage } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
 import { socket } from "../socket/socket";
+import { NewChatModal } from "../components/chat/NewChatModal";
 
 function Chat() {
 
     const [chats, setChats] = useState([]);
     const [selectedChat, setSelectedChat] = useState(null);
     const [messages, setMessages] = useState([]);
+    const [showNewChat, setShowNewChat] = useState(false);
 
     const { user } = useAuth();
+
+    const onNewChat = () => {
+        console.log("New Chat created");
+        setShowNewChat(true);
+    }
 
     useEffect(() => {
         loadChats();
@@ -152,12 +159,18 @@ function Chat() {
                 chats={chats}
                 selectedChat={selectedChat}
                 setSelectedChat={setSelectedChat}
+                onNewChat={onNewChat}
             />
             <ChatWindow 
                 selectedChat={selectedChat}
                 messages={messages}
                 onSend={handleSendMessage}
             />
+            {showNewChat && (
+                <NewChatModal onClose={()=> setShowNewChat(false)}
+                              loadChats={loadChats}
+                />
+            )}
         </div>
     );
 }

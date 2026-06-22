@@ -12,9 +12,6 @@ const { message } = require('..');
 
 
 
-router.get('/',(req,res) => {
-    res.render('test');
-});
 
 router.post('/createAccount', userController.postAddUser);
 
@@ -135,6 +132,20 @@ router.get('/messages/:chatId', ensureAuthenticated, checkChatAccess, async (req
   } else {
     return error(res, result.message, result.status);
   }
-})
+});
+
+router.get('/users', ensureAuthenticated, async (req, res) => {
+    const result = await chatController.getUsers(
+      req.user.id
+    );
+
+    if (!result.error) {
+
+      return success(res, result.data, 200);
+    }
+
+    return error(res, result.message, 500);
+  }
+);
 
 module.exports = router;

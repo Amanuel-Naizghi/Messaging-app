@@ -30,3 +30,25 @@ export const sendMessage = async (chatId, text) => {
     );
     return response.data;
 }
+
+export const getUsers = async () => {
+    const response = await API.get(
+        "/users",
+        {
+            withCredentials: true
+        }
+    );
+    return response.data;
+
+};
+
+export const createPrivateChat = async (userId) => {
+
+    const response = await API.post(
+        "/chats/private",
+        { userId },
+        { withCredentials: true }
+    );
+
+    return response.data;
+};

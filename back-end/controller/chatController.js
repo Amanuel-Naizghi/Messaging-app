@@ -266,3 +266,38 @@ exports.getChatDetailed = async (userId, chatId, cursor, limit = 20) => {
     return { error: true, message: "Error fetching messages", status: 500 };
   }
 }
+
+exports.getUsers = async (currentUserId) => {
+
+  try {
+
+    const users = await prisma.user.findMany({
+      where: {
+        id: {
+          not: currentUserId
+        }
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        profilePic: true
+      }
+    });
+
+    return {
+      error: false,
+      data: users
+    };
+
+  } catch (err) {
+
+    console.error(err);
+
+    return {
+      error: true,
+      message: "Error fetching users"
+    };
+
+  }
+};

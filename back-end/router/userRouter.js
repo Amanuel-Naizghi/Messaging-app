@@ -91,7 +91,7 @@ router.post('/chats/private', ensureAuthenticated, async (req,res) => {
   }
 });
 
-router.post('/chats/group', ensureAuthenticated, checkChatAccess, async (req,res) => {
+router.post('/chats/group', ensureAuthenticated, async (req,res) => {
   const currentUserId = req.user.id;
   const { name, users } = req.body;
 

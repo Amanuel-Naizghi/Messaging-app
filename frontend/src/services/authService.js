@@ -52,3 +52,18 @@ export const createPrivateChat = async (userId) => {
 
     return response.data;
 };
+
+export const createGroupChat = async (name, users) => {
+    const response = await API.post(
+        "/chats/group",
+        {
+            name,
+            users
+        },
+        {
+            withCredentials: true
+        }
+    );
+
+    return response.data;
+}

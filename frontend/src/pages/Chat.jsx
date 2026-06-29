@@ -67,6 +67,8 @@ function Chat() {
 
             });
 
+            updateLastMessage(message);
+
         };
 
         socket.on(
@@ -129,28 +131,44 @@ function Chat() {
                 newMessage
             ]);
 
-            setChats(prev =>
-                prev.map(chat => {
-
-                    if (chat.id !== selectedChat.id) {
-                        return chat;
-                    }
-
-                    return {
-                        ...chat,
-                        lastMessage: {
-                            text: newMessage.text,
-                            sender: user.username,
-                            createdAt: newMessage.createdAt
-                        }
-                    };
-
-                })
-            );
+            updateLastMessage(newMessage);
 
         } catch(error) {
             console.log(error);
         }
+    };
+
+    const updateLastMessage = (message) => {
+
+        setChats(prev => {
+
+            const updatedChats = [...prev];
+
+            const index = updatedChats.findIndex(
+                chat => chat.id === message.chatId
+            );
+
+            if (index === -1) {
+                return prev;
+            }
+
+            const updatedChat = {
+                ...updatedChats[index],
+                lastMessage: {
+                    text: message.text,
+                    sender: message.sender.username,
+                    createdAt: message.createdAt
+                }
+            };
+
+            updatedChats.splice(index, 1);
+
+            updatedChats.unshift(updatedChat);
+
+            return updatedChats;
+
+        });
+
     };
 
     return (

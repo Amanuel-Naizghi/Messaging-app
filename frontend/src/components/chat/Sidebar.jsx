@@ -1,6 +1,6 @@
 import { useAuth } from "../../context/AuthContext";
 
-function Sidebar({chats,selectedChat,setSelectedChat,onNewChat}) {
+function Sidebar({chats,selectedChat,setSelectedChat,onNewChat,onlineUsers}) {
   const { user } = useAuth();
 
   return (
@@ -29,7 +29,8 @@ function Sidebar({chats,selectedChat,setSelectedChat,onNewChat}) {
        <div className="overflow-y-auto">
 
         {chats.map((chat) => {
-            const otherMember = chat.members.find( member => member.id !== user.id);       
+            const otherMember = chat.members.find( member => member.id !== user.id);
+            const isOnline = otherMember?onlineUsers.includes(otherMember.id):false;       
                                 
           return (
             <div
@@ -43,24 +44,40 @@ function Sidebar({chats,selectedChat,setSelectedChat,onNewChat}) {
                 }
               `}
             >
+              <div className="flex items-center gap-2">
+                  {!chat.isGroup && (
+                      <span className={isOnline ? "text-green-500" : "text-gray-400"}>
+                          ●
+                      </span>
+                  )}
 
-              <h3 className="font-semibold">
+                  <div>
+                    <h3 className="font-semibold ">
+                  
 
-                {chat.isGroup
-                  ? chat.groupName
-                  : otherMember?.username.charAt(0).toUpperCase()+otherMember?.username.slice(1)}
+                      {chat.isGroup
+                        ? chat.groupName
+                        : otherMember?.username.charAt(0).toUpperCase()+otherMember?.username.slice(1)}
 
-              </h3>
+                    </h3>
+                    {!chat.isGroup && (
+                        <p className={`text-xs ${isOnline ? "text-green-600" : "text-gray-500"}`}>
+                            {isOnline ? "Online" : "Offline"}
+                        </p>
+                    )}
 
-              <p className="text-sm text-gray-500 truncate">
+                    <p className="text-sm text-gray-500 truncate">
 
-                {chat.lastMessage
-                  ? chat.lastMessage.text
-                  : "No messages yet"}
+                      {chat.lastMessage
+                        ? chat.lastMessage.text
+                        : "No messages yet"}
 
-              </p>
+                    </p>
 
-            </div>
+                  </div>
+              </div>   
+
+          </div>
           )
           
 

@@ -13,6 +13,7 @@ function Chat() {
     const [selectedChat, setSelectedChat] = useState(null);
     const [messages, setMessages] = useState([]);
     const [showNewChat, setShowNewChat] = useState(false);
+    const [onlineUsers, setOnlineUsers] = useState([]);
 
     const { user } = useAuth();
 
@@ -20,6 +21,14 @@ function Chat() {
         console.log("New Chat created");
         setShowNewChat(true);
     }
+
+    useEffect(() => {
+
+        if (!user) return;
+
+        socket.emit("register", user.id);
+
+    }, [user]);
 
     useEffect(() => {
         loadChats();
@@ -71,16 +80,31 @@ function Chat() {
 
         };
 
+        const handleOnlineUsers = (users) => {
+            // console.log("Online Users:", users);
+            setOnlineUsers(users);
+        }
+
         socket.on(
             "receive_message",
             handleReceiveMessage
         );
+
+        socket.on(
+            "online_users",
+            handleOnlineUsers
+        )
 
         return () => {
             socket.off(
                 "receive_message",
                 handleReceiveMessage
             );
+
+            socket.off(
+                "online_users",
+                handleOnlineUsers
+            )
         };
 
     }, [user]);
@@ -178,6 +202,7 @@ function Chat() {
                 selectedChat={selectedChat}
                 setSelectedChat={setSelectedChat}
                 onNewChat={onNewChat}
+                onlineUsers={onlineUsers}
             />
             <ChatWindow 
                 selectedChat={selectedChat}

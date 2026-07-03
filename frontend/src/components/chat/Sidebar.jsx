@@ -1,19 +1,88 @@
+import { useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { updateProfilePicture } from "../../services/authService";
 
 function Sidebar({chats,selectedChat,setSelectedChat,onNewChat,onlineUsers}) {
   const { user } = useAuth();
+  const fileInputRef = useRef();
+
+  const handleProfilePicture = async (e) => {
+
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    try {
+
+        const response = await updateProfilePicture(file);
+        setUser(response.data);
+
+        console.log("Profile picture updated");
+
+    } catch (err) {
+
+        console.log(err);
+
+    }
+
+};
 
   return (
     <div className="w-[350px] border-r border-gray-300 bg-white">
+      {/* This input is hiden one which is used for adding a profile image */}
+      <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={handleProfilePicture}
+      />
+
+      <div className="flex items-center justify-between p-4 border-b">
+
+          <div className="flex items-center gap-3">
+
+              <div
+                  className="w-12 h-12 rounded-full bg-gray-300 
+                  flex items-center justify-center text-lg font-semibold 
+                  cursor-pointer"
+                  onClick={() => fileInputRef.current.click()}
+              >
+
+                  {user?.profilePic ? (
+
+                      <img
+                          src={`http://localhost:3000${user.profilePic}`}
+                          alt="Profile"
+                          className="w-full h-full rounded-full object-cover"
+                          draggable={false}
+                      />
+
+                  ) : (
+
+                      user?.username?.charAt(0).toUpperCase()
+
+                  )}
+
+              </div>
+
+              <div>
+
+                  <h3 className="font-semibold">
+                      {user?.username?.charAt(0).toUpperCase()+user?.username?.slice(1)}
+                  </h3>
+
+              </div>
+
+          </div>
+
+      </div>
       
       {/* Header */}
       <div className="p-4 border-b border-gray-300">
-        <h2 className="text-2xl font-bold">
+        <h2 className="text-2xl font-bold text-left">
           Messages
         </h2>
-        <button onClick={onNewChat} className="bg-blue-500 text-white px-3 py-1 rounded-lg ">
-          +
-        </button>
       </div>
 
       {/* Search */}
@@ -84,6 +153,9 @@ function Sidebar({chats,selectedChat,setSelectedChat,onNewChat,onlineUsers}) {
         })}
 
       </div>
+      <button onClick={onNewChat} className="bg-blue-500 text-white px-3 py-1 rounded-lg border-t-[2rem]">
+          +
+      </button>
 
     </div>
   );

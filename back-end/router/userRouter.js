@@ -9,6 +9,7 @@ const checkChatAccess = require('../middleware/checkChatAccess');
 const validateMessage = require('../middleware/validateMessage');
 const { success, error } = require('../utils/response');
 const { message } = require('..');
+const upload = require("../middleware/upload");
 
 
 
@@ -146,6 +147,13 @@ router.get('/users', ensureAuthenticated, async (req, res) => {
 
     return error(res, result.message, 500);
   }
+);
+
+router.put(
+    "/profile-picture",
+    ensureAuthenticated,
+    upload.single("profilePic"),
+    userController.updateProfilePicture
 );
 
 module.exports = router;

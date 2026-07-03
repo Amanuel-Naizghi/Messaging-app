@@ -67,3 +67,22 @@ export const createGroupChat = async (name, users) => {
 
     return response.data;
 }
+export const updateProfilePicture = async (file) => {
+
+    const formData = new FormData();
+
+    formData.append("profilePic", file);
+
+    const response = await API.put(
+        "/profile-picture",
+        formData,
+        {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        }
+    );
+
+    return response.data;
+
+};

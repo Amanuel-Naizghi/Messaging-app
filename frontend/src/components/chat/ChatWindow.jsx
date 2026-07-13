@@ -1,9 +1,13 @@
 import MessageInput from "./MessageInput";
 import { useAuth } from "../../context/AuthContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { editMessage } from "../../services/authService";
 
-function ChatWindow({selectedChat, messages, onSend}) {
 
+function ChatWindow({selectedChat, messages, setMessages, onSend}) {
+
+  const [editingMessageId, setEditingMessageId] = useState(null);
+  const [editedText, setEditedText] = useState("");
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -27,6 +31,48 @@ function ChatWindow({selectedChat, messages, onSend}) {
             minute: "2-digit",
            });
   }
+
+  const handleEdit = (message) => {
+    setEditingMessageId(message.id);
+    setEditedText(message.text);
+  }
+
+  const handleCancelEdit = () => {
+    setEditingMessageId(null);
+    setEditedText("");
+  }
+
+  const handleSaveEdit = async () => {
+
+      try {
+
+          const response = await editMessage(
+              editingMessageId,
+              editedText
+          );
+
+          setMessages(prev =>
+              prev.map(message =>
+
+                  message.id === editingMessageId
+                      ? response.data
+                      : message
+
+              )
+          );
+
+          setEditingMessageId(null);
+          setEditedText("");
+
+      } catch (err) {
+
+          console.log(err);
+
+      }
+
+  };
+
+  
 
   if(!selectedChat) {
     return (
@@ -107,24 +153,64 @@ function ChatWindow({selectedChat, messages, onSend}) {
 
                 {isMine && (
 
-                  <div>
+                    <div className="flex items-center gap-2">
 
-                    <div
-                      className="
-                        bg-blue-500
-                        text-white
-                        p-3
-                        rounded-xl
-                        shadow
-                      "
-                    >
-                      {message.text}
-                      <p className="text-[11px] text-right mt-1 text-white">
-                        {formatTime(message.createdAt)}
-                      </p>
+                        <button
+                            onClick={() => handleEdit(message)}
+                            className="text-sm hover:text-blue-600"
+                        >
+                            ✏️
+                        </button>
+
+                        <div
+                            className="
+                                bg-blue-500
+                                text-white
+                                p-3
+                                rounded-xl
+                                shadow
+                            "
+                        >
+
+                            {editingMessageId === message.id ? (
+
+                                <input
+                                    value={editedText}
+                                    onChange={(e) => setEditedText(e.target.value)}
+                                    className="bg-white text-black rounded px-2 py-1 outline-none"
+                                />
+
+                            ) : (
+
+                                <>
+                                    {message.text}
+                                    <p className="text-[11px] text-right mt-1 text-white">
+                                        {formatTime(message.createdAt)}
+                                    </p>
+                                </>
+
+                            )}
+
+                        </div>
+
+                        {editingMessageId === message.id && (
+
+                            <>
+                                <button className="text-green-600" onClick={handleSaveEdit}>
+                                    ✔
+                                </button>
+
+                                <button
+                                    onClick={handleCancelEdit}
+                                    className="text-red-600"
+                                >
+                                    ✖
+                                </button>
+                            </>
+
+                        )}
+
                     </div>
-
-                  </div>
 
                 )}
 

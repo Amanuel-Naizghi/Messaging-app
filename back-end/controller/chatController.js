@@ -301,3 +301,79 @@ exports.getUsers = async (currentUserId) => {
 
   }
 };
+
+exports.editMessage = async (senderId, messageId, text) => {
+
+    if (!text) {
+        return {
+            error: true,
+            message: "Message text is required",
+            status: 400
+        };
+    }
+
+    try {
+
+        const message = await prisma.message.findUnique({
+            where: {
+                id: messageId
+            }
+        });
+
+        if (!message) {
+            return {
+                error: true,
+                message: "Message not found",
+                status: 404
+            };
+        }
+
+        if (message.senderId !== senderId) {
+            return {
+                error: true,
+                message: "Unauthorized",
+                status: 403
+            };
+        }
+
+        const updatedMessage = await prisma.message.update({
+
+            where: {
+                id: messageId
+            },
+
+            data: {
+                text
+            },
+
+            include: {
+                sender: {
+                    select: {
+                        id: true,
+                        username: true,
+                        profilePic: true
+                    }
+                }
+            }
+
+        });
+
+        return {
+            error: false,
+            data: updatedMessage,
+            status: 200
+        };
+
+    } catch (err) {
+
+        console.error(err);
+
+        return {
+            error: true,
+            message: "Error editing message",
+            status: 500
+        };
+
+    }
+
+};

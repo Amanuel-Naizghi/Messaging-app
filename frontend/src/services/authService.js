@@ -86,3 +86,14 @@ export const updateProfilePicture = async (file) => {
     return response.data;
 
 };
+
+export const editMessage = async (messageId, text) => {
+
+    const response = await API.put(
+        `/messages/${messageId}`,
+        { text }
+    );
+
+    return response.data;
+
+};

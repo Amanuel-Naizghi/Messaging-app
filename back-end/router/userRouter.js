@@ -156,4 +156,36 @@ router.put(
     userController.updateProfilePicture
 );
 
+router.put(
+    "/messages/:id", ensureAuthenticated, async (req, res) => {
+
+        const senderId = req.user.id;
+
+        const messageId = Number(req.params.id);
+
+        const { text } = req.body;
+
+        const result = await chatController.editMessage(
+            senderId,
+            messageId,
+            text
+        );
+
+        if (!result.error) {
+            return success(
+                res,
+                result.data,
+                result.status
+            );
+        }
+
+        return error(
+            res,
+            result.message,
+            result.status
+        );
+
+    }
+);
+
 module.exports = router;

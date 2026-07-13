@@ -208,6 +208,7 @@ function Chat() {
                 selectedChat={selectedChat}
                 messages={messages}
                 onSend={handleSendMessage}
+                setMessages={setMessages}
             />
             {showNewChat && (
                 <NewChatModal onClose={()=> setShowNewChat(false)}

@@ -188,4 +188,23 @@ router.put(
     }
 );
 
+router.delete(
+    "/messages/:id",
+    ensureAuthenticated,
+    async (req, res) => {
+
+        const result = await chatController.deleteMessage(
+            req.user.id,
+            Number(req.params.id)
+        );
+
+        if (!result.error) {
+            return success(res, result.data, result.status);
+        }
+
+        return error(res, result.message, result.status);
+
+    }
+);
+
 module.exports = router;

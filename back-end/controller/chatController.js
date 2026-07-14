@@ -377,3 +377,58 @@ exports.editMessage = async (senderId, messageId, text) => {
     }
 
 };
+
+exports.deleteMessage = async (senderId, messageId) => {
+
+    try {
+
+        const message = await prisma.message.findUnique({
+            where: {
+                id: messageId
+            }
+        });
+
+        if (!message) {
+            return {
+                error: true,
+                message: "Message not found",
+                status: 404
+            };
+        }
+
+        if (message.senderId !== senderId) {
+            return {
+                error: true,
+                message: "Unauthorized",
+                status: 403
+            };
+        }
+
+        await prisma.message.delete({
+            where: {
+                id: messageId
+            }
+        });
+
+        return {
+            error: false,
+            data: {
+                id: messageId,
+                chatId: message.chatId
+            },
+            status: 200
+        };
+
+    } catch (err) {
+
+        console.error(err);
+
+        return {
+            error: true,
+            message: "Error deleting message",
+            status: 500
+        };
+
+    }
+
+};

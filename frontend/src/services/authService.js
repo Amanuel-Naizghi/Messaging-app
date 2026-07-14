@@ -97,3 +97,13 @@ export const editMessage = async (messageId, text) => {
     return response.data;
 
 };
+
+export const deleteMessage = async (messageId) => {
+
+    const response = await API.delete(
+        `/messages/${messageId}`
+    );
+
+    return response.data;
+
+};

@@ -164,12 +164,13 @@ function Chat() {
 
     const updateLastMessage = (message) => {
 
+
         setChats(prev => {
 
             const updatedChats = [...prev];
 
             const index = updatedChats.findIndex(
-                chat => chat.id === message.chatId
+                chat => chat.id === (message ? message.chatId : selectedChat.id)
             );
 
             if (index === -1) {
@@ -178,13 +179,14 @@ function Chat() {
 
             const updatedChat = {
                 ...updatedChats[index],
-                lastMessage: {
-                    text: message.text,
-                    sender: message.sender.username,
-                    createdAt: message.createdAt
-                }
+                lastMessage: message
+                    ? {
+                        text: message.text,
+                        sender: message.sender.username,
+                        createdAt: message.createdAt
+                    }
+                    : null
             };
-
             updatedChats.splice(index, 1);
 
             updatedChats.unshift(updatedChat);
@@ -209,6 +211,7 @@ function Chat() {
                 messages={messages}
                 onSend={handleSendMessage}
                 setMessages={setMessages}
+                updateLastMessage={updateLastMessage}
             />
             {showNewChat && (
                 <NewChatModal onClose={()=> setShowNewChat(false)}

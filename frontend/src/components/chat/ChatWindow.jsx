@@ -1,14 +1,15 @@
 import MessageInput from "./MessageInput";
 import { useAuth } from "../../context/AuthContext";
 import { useEffect, useRef, useState } from "react";
-import { editMessage } from "../../services/authService";
+import { editMessage, deleteMessage } from "../../services/authService";
 
 
-function ChatWindow({selectedChat, messages, setMessages, onSend}) {
+function ChatWindow({selectedChat, messages, setMessages, onSend, updateLastMessage}) {
 
   const [editingMessageId, setEditingMessageId] = useState(null);
   const [editedText, setEditedText] = useState("");
   const messagesEndRef = useRef(null);
+  const [menuMessageId, setMenuMessageId] = useState(null);
 
   useEffect(() => {
 
@@ -61,6 +62,7 @@ function ChatWindow({selectedChat, messages, setMessages, onSend}) {
               )
           );
 
+          updateLastMessage(response.data);
           setEditingMessageId(null);
           setEditedText("");
 
@@ -69,6 +71,43 @@ function ChatWindow({selectedChat, messages, setMessages, onSend}) {
           console.log(err);
 
       }
+
+  };
+
+  const handleDelete = async (messageId) => {
+
+    try {
+
+        await deleteMessage(messageId);
+
+        setMessages(prev =>
+            prev.filter(message =>
+                message.id !== messageId
+            )
+        );
+
+        setMenuMessageId(null);
+
+        const remainingMessages = messages.filter(
+            message => message.id !== messageId
+        );
+
+
+        const newLastMessage = remainingMessages.at(-1);
+
+        if (newLastMessage) {
+            updateLastMessage(newLastMessage);
+        } else {
+            updateLastMessage(null);
+        }
+
+        updateLastMessage(newLastMessage);
+
+    } catch (err) {
+
+        console.log(err);
+
+    }
 
   };
 
@@ -155,12 +194,42 @@ function ChatWindow({selectedChat, messages, setMessages, onSend}) {
 
                     <div className="flex items-center gap-2">
 
-                        <button
-                            onClick={() => handleEdit(message)}
-                            className="text-sm hover:text-blue-600"
-                        >
-                            ✏️
-                        </button>
+                      <div className="relative">
+                          <button
+                              onClick={() => setMenuMessageId(
+                                  menuMessageId === message.id
+                                      ? null
+                                      : message.id
+                              )}
+                              className="text-gray-500 hover:text-black"
+                          >
+                              ⋮
+                          </button>
+                          {menuMessageId === message.id && (
+                            <div className="absolute right-0 mt-2 w-32 bg-white rounded shadow-lg border">
+
+                                <button
+                                    onClick={() => {
+                                        handleEdit(message);
+                                        setMenuMessageId(null);
+                                    }}
+                                    className="w-full text-left px-3 py-2 hover:bg-gray-100"
+                                >
+                                    ✏ Edit
+                                </button>
+
+                                <button
+                                    onClick={() => handleDelete(message.id)}
+                                    className="w-full text-left px-3 py-2 text-red-600 hover:bg-gray-100"
+                                >
+                                    🗑 Delete
+                                </button>
+
+                            </div>
+                          )}
+                      </div>
+
+                        
 
                         <div
                             className="

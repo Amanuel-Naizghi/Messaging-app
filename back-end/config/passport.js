@@ -10,7 +10,6 @@ module.exports = function(passport) {
             async (email, password, done) => {
                 try {
                     const user = await userControllerHelper.getUserByEmail(email);
-                    // console.log(`User email is ${email} and password is ${password}`);
                     if (!user) {
                         return done(null, false, { message: "Incorrect user name" });
                     }
@@ -33,7 +32,6 @@ module.exports = function(passport) {
     passport.deserializeUser(async (id, done) => {
         try {
             const rows = await userControllerHelper.getUserById(id);
-            // console.log(`Rows :`, rows);
             done(null, rows);
         } catch (err) {
             done(err);

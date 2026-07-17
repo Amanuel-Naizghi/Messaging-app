@@ -16,7 +16,7 @@ function NewChatModal({ onClose, loadChats }) {
                 
                 setUsers(response.data || []);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
 
@@ -31,7 +31,7 @@ function NewChatModal({ onClose, loadChats }) {
             await loadChats();
             onClose();
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
 
     };
@@ -61,7 +61,7 @@ function NewChatModal({ onClose, loadChats }) {
 
         } catch (error) {
 
-            console.log(error.response?.data);
+            console.error(error.response?.data);
 
         }
 

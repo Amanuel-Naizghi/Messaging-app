@@ -1,10 +1,13 @@
 import { useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { updateProfilePicture } from "../../services/authService";
+import { useNavigate } from "react-router-dom";
 
 function Sidebar({chats,selectedChat,setSelectedChat,onNewChat,onlineUsers}) {
   const { user } = useAuth();
   const fileInputRef = useRef();
+  const navigate = useNavigate();
+  const { logoutUser } = useAuth();
 
   const handleProfilePicture = async (e) => {
 
@@ -17,15 +20,24 @@ function Sidebar({chats,selectedChat,setSelectedChat,onNewChat,onlineUsers}) {
         const response = await updateProfilePicture(file);
         setUser(response.data);
 
-        console.log("Profile picture updated");
-
     } catch (err) {
 
-        console.log(err);
+        console.error(err);
 
     }
 
-};
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+
 
   return (
     <div className="w-[350px] border-r border-gray-300 bg-white">
@@ -65,6 +77,7 @@ function Sidebar({chats,selectedChat,setSelectedChat,onNewChat,onlineUsers}) {
                   )}
 
               </div>
+              
 
               <div>
 
@@ -72,9 +85,14 @@ function Sidebar({chats,selectedChat,setSelectedChat,onNewChat,onlineUsers}) {
                       {user?.username?.charAt(0).toUpperCase()+user?.username?.slice(1)}
                   </h3>
 
+
               </div>
 
           </div>
+          <button
+              onClick={handleLogout} title="Logout" className="text-red-500 hover:text-red-600">
+              Logout
+          </button>
 
       </div>
       
@@ -156,6 +174,7 @@ function Sidebar({chats,selectedChat,setSelectedChat,onNewChat,onlineUsers}) {
       <button onClick={onNewChat} className="bg-blue-500 text-white px-3 py-1 rounded-lg border-t-[2rem]">
           +
       </button>
+
 
     </div>
   );

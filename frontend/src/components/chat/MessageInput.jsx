@@ -8,7 +8,7 @@ function MessageInput({ onSend }) {
     
     if(!text.trim()) return;
     onSend(text);
-    // console.log("I have been triggered")
+
     setText("");
   }
   return (

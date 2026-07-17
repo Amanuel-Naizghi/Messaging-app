@@ -207,4 +207,17 @@ router.delete(
     }
 );
 
+router.post("/logout", (req,res) => {
+  req.logout((err) => {
+    if (err) {
+      return error(res,"Logout Failed", 500);
+    }
+
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid");
+      return success(res,"Logged out");
+    })
+  })
+});
+
 module.exports = router;

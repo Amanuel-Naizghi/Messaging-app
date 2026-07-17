@@ -68,7 +68,7 @@ function ChatWindow({selectedChat, messages, setMessages, onSend, updateLastMess
 
       } catch (err) {
 
-          console.log(err);
+          console.error(err);
 
       }
 
@@ -105,7 +105,7 @@ function ChatWindow({selectedChat, messages, setMessages, onSend, updateLastMess
 
     } catch (err) {
 
-        console.log(err);
+        console.error(err);
 
     }
 

@@ -216,7 +216,7 @@ exports.createMessage = async ( senderId, chatId, text ) => {
     return {error: false, data: message, status: 201};
 
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return {error: true, message: "Error sending message", status: 500}
   }
 }

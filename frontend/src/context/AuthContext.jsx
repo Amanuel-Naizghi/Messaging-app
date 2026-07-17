@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getChats } from "../services/authService";
+import { getChats, logout } from "../services/authService";
 
 const AuthContext = createContext();
 
@@ -11,6 +11,11 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     checkAuth();
   }, []);
+
+  const logoutUser = async () => {
+    await logout();
+    setUser(null);
+  }
 
   const checkAuth = async () => {
     try {
@@ -28,6 +33,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        logoutUser,
         setUser,
         loading,
       }}

@@ -30,14 +30,13 @@ function Login() {
         try {
             const response = await loginUser(formData);
             
-            console.log(response);
 
             setUser(response.data.user);
 
             navigate("/");
 
         } catch (error) {
-            console.log(error.response.data);
+            console.error(error.response.data);
 
             setErrorMessage(
                 error.response?.data?.error || "Invalid email or password"

@@ -18,7 +18,6 @@ function Chat() {
     const { user } = useAuth();
 
     const onNewChat = () => {
-        console.log("New Chat created");
         setShowNewChat(true);
     }
 
@@ -81,7 +80,6 @@ function Chat() {
         };
 
         const handleOnlineUsers = (users) => {
-            // console.log("Online Users:", users);
             setOnlineUsers(users);
         }
 
@@ -113,21 +111,19 @@ function Chat() {
     const loadChats = async() => {
         try {
             const response = await getChats();
-            // console.log(response);
             setChats(response.data.chats || response);
         } catch(error) {
-            console.log(error);
+            console.error(error);
         }
     }
 
     const loadMessages = async (chatId) => {
         try {
             const response = await getMessages(chatId);
-            // console.log(response);
             setMessages(response.data || []);
-            // console.log(response.data);
+
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 
@@ -149,7 +145,7 @@ function Chat() {
                     username: user.username
                 }
             };
-            console.log("Local ID:", newMessage.id);
+
             setMessages(prev => [
                 ...prev,
                 newMessage
@@ -158,7 +154,7 @@ function Chat() {
             updateLastMessage(newMessage);
 
         } catch(error) {
-            console.log(error);
+            console.error(error);
         }
     };
 

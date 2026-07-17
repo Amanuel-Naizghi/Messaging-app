@@ -33,10 +33,9 @@ function Register() {
 
         try{
             const response = await registerUser(formData);
-            console.log(response);
             navigate("/login");
         } catch(error){
-            console.log(error.response?.data.message);
+            console.error(error.response?.data.message);
             const backendErrors = error.response?.data?.message;
             if (Array.isArray(backendErrors)){
                 setErrors(backendErrors);

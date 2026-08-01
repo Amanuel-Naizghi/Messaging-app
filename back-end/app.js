@@ -10,7 +10,7 @@ const passport = require("passport");
 require("./config/passport")(passport);
 
 app.use(cors({
-    origin: "https://messaging-app-chi-red.vercel.app/", // The orgin is vecel
+    origin: process.env.CLIENT_URL,
     credentials: true
 }))
 

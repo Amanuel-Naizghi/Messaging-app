@@ -16,11 +16,17 @@ app.use(cors({
 
 const flash = require("connect-flash");
 
+app.set("trust proxy", 1);
+
 app.use(session({
-    secret:"super-secret-key",
-    resave:false,
-    saveUninitialized:false
-}))
+    secret: "super-secret-key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: true,
+        sameSite: "none"
+    }
+}));
 
 const router = require('./router/userRouter');
 
@@ -47,7 +53,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: process.env.CLIENT_URL,
         credentials: true
     },
 });

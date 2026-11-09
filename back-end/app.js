@@ -9,10 +9,20 @@ const { Server } = require("socket.io");
 const passport = require("passport");
 require("./config/passport")(passport);
 
+// app.use(cors({
+//     origin: process.env.CLIENT_URL,
+//     credentials: true
+// }))
+
+const allowedOrigins = [
+    "http://localhost:5173",
+    process.env.CLIENT_URL
+].filter(Boolean);
+
 app.use(cors({
-    origin: process.env.CLIENT_URL,
+    origin: allowedOrigins,
     credentials: true
-}))
+}));
 
 const flash = require("connect-flash");
 
@@ -51,9 +61,16 @@ const PORT = 3000
 // Socket
 const server = http.createServer(app);
 
+// const io = new Server(server, {
+//     cors: {
+//         origin: process.env.CLIENT_URL,
+//         credentials: true
+//     },
+// });
+
 const io = new Server(server, {
     cors: {
-        origin: process.env.CLIENT_URL,
+        origin: allowedOrigins,
         credentials: true
     },
 });

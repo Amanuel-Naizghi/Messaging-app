@@ -139,7 +139,7 @@ function ChatWindow({
         </div>
 
         {/* Chat name */}
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 text-left">
           <h2 className="font-bold text-base md:text-xl text-gray-900 truncate">
             {displayName}
           </h2>
@@ -175,7 +175,7 @@ function ChatWindow({
                   </div>
 
                   <div className="min-w-0">
-                    <div className="bg-white text-gray-900 p-3 rounded-xl shadow-sm break-words [overflow-wrap:anywhere]">
+                    <div className="bg-white text-gray-900 p-3 rounded-xl shadow-sm break-words [overflow-wrap:anywhere] text-left">
                       <p className="whitespace-pre-wrap">
                         {message.text}
                       </p>
@@ -233,7 +233,7 @@ function ChatWindow({
                   </div>
 
                   {/* Message bubble */}
-                  <div className="min-w-0 bg-blue-500 text-white p-3 rounded-xl shadow-sm break-words [overflow-wrap:anywhere]">
+                  <div className="min-w-0 bg-blue-500 text-white p-3 rounded-xl shadow-sm break-words [overflow-wrap:anywhere] text-left">
 
                     {editingMessageId === message.id ? (
                       <textarea

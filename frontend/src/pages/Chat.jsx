@@ -193,27 +193,50 @@ function Chat() {
 
     };
 
-    return (
-        <div className="h-screen flex overflow-hidden">
-            <Sidebar 
-                chats={chats}
-                selectedChat={selectedChat}
-                setSelectedChat={setSelectedChat}
-                onNewChat={onNewChat}
-                onlineUsers={onlineUsers}
-            />
-            <ChatWindow 
-                selectedChat={selectedChat}
-                messages={messages}
-                onSend={handleSendMessage}
-                setMessages={setMessages}
-                updateLastMessage={updateLastMessage}
-            />
+   return (
+        <div className="h-dvh flex overflow-hidden">
+
+            {/* Sidebar */}
+            <div
+                className={`
+                    ${selectedChat ? "hidden md:block" : "block"}
+                    w-full md:w-auto h-full
+                `}
+            >
+                <Sidebar
+                    chats={chats}
+                    selectedChat={selectedChat}
+                    setSelectedChat={setSelectedChat}
+                    onNewChat={onNewChat}
+                    onlineUsers={onlineUsers}
+                />
+            </div>
+
+            {/* Chat Window */}
+            <div
+                className={`
+                    ${selectedChat ? "flex" : "hidden md:flex"}
+                    flex-1 min-w-0 h-full
+                `}
+            >
+                <ChatWindow
+                    selectedChat={selectedChat}
+                    messages={messages}
+                    onSend={handleSendMessage}
+                    setMessages={setMessages}
+                    updateLastMessage={updateLastMessage}
+                    onBack={() => setSelectedChat(null)}
+                />
+            </div>
+
+            {/* New Chat Modal */}
             {showNewChat && (
-                <NewChatModal onClose={()=> setShowNewChat(false)}
-                              loadChats={loadChats}
+                <NewChatModal
+                    onClose={() => setShowNewChat(false)}
+                    loadChats={loadChats}
                 />
             )}
+
         </div>
     );
 }
